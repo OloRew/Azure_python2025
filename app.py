@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
-import os
 
 config = {
     'user': 'wbsadmin',  # Nazwa użytkownika bazy danych
@@ -35,6 +34,35 @@ def add_client():
     cursor = conn.cursor()
     query = "INSERT INTO Clients (Name, City, Sales) VALUES (%s, %s, %s)"
     cursor.execute(query, (name, city, sales))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('index'))
+
+
+@app.route('/edit', methods=['POST'])
+def edit_client():
+    id = request.form['id']
+    name = request.form['name']
+    city = request.form['city']
+    sales = request.form['sales']
+
+    conn = mysql.connector.connect(**config)
+    cursor = conn.cursor()
+    query = "UPDATE Clients SET Name = %s, City = %s, Sales = %s WHERE ID = %s"
+    cursor.execute(query, (name, city, sales, id))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('index'))
+
+
+@app.route('/delete/<int:id>', methods=['POST'])
+def delete_client(id):
+    conn = mysql.connector.connect(**config)
+    cursor = conn.cursor()
+    query = "DELETE FROM Clients WHERE ID = %s"
+    cursor.execute(query, (id,))
     conn.commit()
     conn.close()
 

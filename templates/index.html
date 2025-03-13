@@ -4,26 +4,73 @@
     <meta charset="UTF-8">
     <title>Tabela danych</title>
     <style>
-        #addForm {
+        #addForm, #editForm {
             display: none;
             margin-top: 20px;
         }
+        table {
+            width: 100%; /* Rozszerzenie tabeli dwukrotnie */
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #000;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
     </style>
     <script>
-        function toggleForm() {
-            var form = document.getElementById("addForm");
+        function toggleForm(formId) {
+            var form = document.getElementById(formId);
             if (form.style.display === "none") {
                 form.style.display = "block";
             } else {
                 form.style.display = "none";
             }
         }
+
+        function editClient(id, name, city, sales) {
+            document.getElementById("editId").value = id;
+            document.getElementById("editName").value = name;
+            document.getElementById("editCity").value = city;
+            document.getElementById("editSales").value = sales;
+            toggleForm("editForm");
+        }
     </script>
 </head>
 <body>
     <h1>Lista klientów</h1>
-    <button onclick="toggleForm()">Dodaj nowego klienta</button>
 
+    <!-- Tabela z danymi klientów -->
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nazwa</th>
+            <th>Miasto</th>
+            <th>Sprzedaż</th>
+            <th>Akcje</th>
+        </tr>
+        {% for row in data %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>
+                <button onclick="editClient('{{ row[0] }}', '{{ row[1] }}', '{{ row[2] }}', '{{ row[3] }}')">Edytuj</button>
+                <form action="/delete/{{ row[0] }}" method="post" style="display:inline;">
+                    <button type="submit">Usuń</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Przycisk dodawania nowego klienta -->
+    <button onclick="toggleForm('addForm')" style="margin-top: 20px;">Dodaj nowego klienta</button>
+
+    <!-- Formularz dodawania nowego klienta -->
     <div id="addForm">
         <h2>Dodaj nowego klienta</h2>
         <form action="/add" method="post">
@@ -37,21 +84,19 @@
         </form>
     </div>
 
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Nazwa</th>
-            <th>Miasto</th>
-            <th>Sprzedaż</th>
-        </tr>
-        {% for row in data %}
-        <tr>
-            <td>{{ row[0] }}</td>
-            <td>{{ row[1] }}</td>
-            <td>{{ row[2] }}</td>
-            <td>{{ row[3] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <!-- Formularz edycji klienta -->
+    <div id="editForm">
+        <h2>Edytuj klienta</h2>
+        <form action="/edit" method="post">
+            <input type="hidden" id="editId" name="id">
+            <label for="editName">Nazwa:</label>
+            <input type="text" id="editName" name="name" required><br><br>
+            <label for="editCity">Miasto:</label>
+            <input type="text" id="editCity" name="city" required><br><br>
+            <label for="editSales">Sprzedaż:</label>
+            <input type="number" id="editSales" name="sales" required><br><br>
+            <input type="submit" value="Zapisz zmiany">
+        </form>
+    </div>
 </body>
 </html>
