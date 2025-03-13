@@ -1,17 +1,27 @@
 from flask import Flask, render_template, request, redirect, url_for
-import mysql.connector
+from dotenv import load_dotenv
+import mysql.connector, os
 
-config = {
-    'user': 'wbsadmin',  # Nazwa użytkownika bazy danych
-    'password': 'Testowe7',  # Hasło użytkownika
-    'host': 'wbspython2025.mysql.database.azure.com',  # Nazwa serwera Azure MySQL
-    'database': 'wbspython2025',  # Nazwa bazy danych
-    'port': 3306,  # Port (domyślnie 3306 dla MySQL)
+load_dotenv()
+
+user = os.getenv('DATABASE_USER', 'default_user')
+password = os.getenv('DATABASE_PASSWORD')
+host=os.getenv('DATABASE_HOST')
+database=os.getenv('DATABASE_NAME')
+config = {'user':user,'password':password,'host':host,'database':database,'port': 3306 }
+
+
+#config = {
+#    'user': 'wbsadmin',  # Nazwa użytkownika bazy danych
+#    'password': 'Testowe7',  # Hasło użytkownika
+#    'host': 'wbspython2025.mysql.database.azure.com',  # Nazwa serwera Azure MySQL
+#    'database': 'wbspython2025',  # Nazwa bazy danych
+#    'port': 3306,  # Port (domyślnie 3306 dla MySQL)
     # 'ssl_ca': '/path/to/BaltimoreCyberTrustRoot.crt.pem'  # Ścieżka do certyfikatu SSL
-}
+#}
+
 
 app = Flask(__name__)
-
 
 
 @app.route('/')
