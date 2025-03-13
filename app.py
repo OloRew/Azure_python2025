@@ -13,6 +13,7 @@ config = {
 app = Flask(__name__)
 
 
+
 @app.route('/')
 def index():
     conn = mysql.connector.connect(**config)
